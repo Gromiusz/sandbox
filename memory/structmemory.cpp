@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <sys/mman.h>
 #include <sys/stat.h> 
 #include <fcntl.h>
@@ -16,6 +17,14 @@ struct SharedMemory
 
 void SignalHandler(int signum) {
     std::cout << "Signal received: " << signum << std::endl;
+}
+
+void writeToFile(SharedMemory* ptr)
+{
+    std::ofstream file("save.bin", std::ios::trunc | std::ios::binary);
+    if(!file) std::cout << "Error while opening file" << std::endl;
+    file.write(reinterpret_cast<char*>(ptr), sizeof(SharedMemory));
+    if(!file.good()) std::cout << "Error while writing to file" << std::endl;
 }
 
 int main()
@@ -41,6 +50,8 @@ int main()
 
     std::cout << shm_ptr->message << std::endl;
     std::cout << shm_ptr->creator_pid << std::endl;
+
+    writeToFile(shm_ptr);
 
     munmap(shm_ptr, sizeof(SharedMemory));
     close(shm_fd);
