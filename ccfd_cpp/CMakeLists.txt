@@ -6,36 +6,34 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 find_package(GTest CONFIG REQUIRED)
 
-# set(SRC )
-# set(LIBSRC )
-# set(UTSRC)
+set(SRC lab2-main.cpp)
+set(LIBSRC lab2.cpp)
+set(UTSRC lab2-ut.cpp)
 
-add_library(lab2-lib STATIC lab2.cpp)
+add_library(lab-lib STATIC ${LIBSRC})
 
-add_executable(lab1 lab1.cpp)
-add_executable(lab2-main lab2-main.cpp)
+add_executable(lab-main ${SRC})
+add_executable(lab-ut ${UTSRC})
 
-add_executable(lab2-ut lab2-ut.cpp)
-
-target_link_libraries(lab2-ut PUBLIC GTest::gtest)
-target_link_libraries(lab2-ut PUBLIC lab2-lib)
-target_link_libraries(lab2-main PUBLIC lab2-lib)
+target_link_libraries(lab-ut PUBLIC GTest::gtest)
+target_link_libraries(lab-ut PUBLIC lab-lib)
+target_link_libraries(lab-main PUBLIC lab-lib)
 
 enable_testing()
 
-add_test(NAME ValgrindTestLab2
-         COMMAND valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 $<TARGET_FILE:lab2-main>)
+add_test(NAME ValgrindTestlab
+         COMMAND valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 $<TARGET_FILE:lab-main>)
 
-set_tests_properties(ValgrindTestLab2 PROPERTIES
+set_tests_properties(ValgrindTestlab PROPERTIES
     FAIL_REGULAR_EXPRESSION "ERROR SUMMARY: [^0]+ errors"
 )
 
-add_test(NAME ValgrindTestLab2UT
-         COMMAND valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 $<TARGET_FILE:lab2-ut>)
+add_test(NAME ValgrindTestlabUT
+         COMMAND valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 $<TARGET_FILE:lab-ut>)
 
-set_tests_properties(ValgrindTestLab2UT PROPERTIES
+set_tests_properties(ValgrindTestlabUT PROPERTIES
     FAIL_REGULAR_EXPRESSION "ERROR SUMMARY: [^0]+ errors"
 )
 
 include(GoogleTest)
-gtest_discover_tests(lab2-ut)
+gtest_discover_tests(lab-ut)
