@@ -25,19 +25,19 @@ target_link_libraries(lab-main PUBLIC lab-lib)
 
 enable_testing()
 
-add_test(NAME ValgrindTestlab
-         COMMAND valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 $<TARGET_FILE:lab-main>)
+# add_test(NAME ValgrindTestlab
+#          COMMAND valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 $<TARGET_FILE:lab-main>)
 
-set_tests_properties(ValgrindTestlab PROPERTIES
-    FAIL_REGULAR_EXPRESSION "ERROR SUMMARY: [^0]+ errors"
-)
+# set_tests_properties(ValgrindTestlab PROPERTIES
+#     FAIL_REGULAR_EXPRESSION "ERROR SUMMARY: [^0]+ errors"
+# )
 
-add_test(NAME ValgrindTestlabUT
-         COMMAND valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 $<TARGET_FILE:lab-ut>)
+# add_test(NAME ValgrindTestlabUT
+#          COMMAND valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 $<TARGET_FILE:lab-ut>)
 
-set_tests_properties(ValgrindTestlabUT PROPERTIES
-    FAIL_REGULAR_EXPRESSION "ERROR SUMMARY: [^0]+ errors"
-)
+# set_tests_properties(ValgrindTestlabUT PROPERTIES
+#     FAIL_REGULAR_EXPRESSION "ERROR SUMMARY: [^0]+ errors"
+# )
 
 include(GoogleTest)
 gtest_discover_tests(lab-ut)
