@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 find_package(GTest CONFIG REQUIRED)
 
-set(SRC lab2-main.cpp)
-set(LIBSRC lab2.cpp)
-set(UTSRC lab2-ut.cpp)
+set(SRC lab3/lab3-main.cpp)
+set(LIBSRC lab3/lab3-lib.cpp)
+set(UTSRC lab3/lab3-ut.cpp)
 
 add_library(lab-lib STATIC ${LIBSRC})
 
