@@ -26,4 +26,8 @@ int main()
 
     sint.print();
     sdouble.print();
+
+    double tab[] = {3.2, 5.4, 3.1};
+    std::cout << multiplyTab(tab, 3) << std::endl;
+    std::cout << pairSum<int>(pair) << std::endl;
 }
