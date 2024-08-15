@@ -1,3 +1,6 @@
 #include "lab5-lib.hpp"
 
-int main(){}
+int main()
+{
+    
+}
