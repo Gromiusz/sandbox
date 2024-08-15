@@ -10,9 +10,9 @@ find_package(GTest CONFIG REQUIRED)
 # set(LIBSRC lab3/lab3-lib.cpp)
 # set(UTSRC lab3/lab3-ut.cpp)
 
-set(SRC lab4/lab4-main.cpp)
-set(LIBSRC lab4/lab4-lib.cpp)
-set(UTSRC lab4/lab4-ut.cpp)
+set(SRC lab5/lab5-main.cpp)
+set(LIBSRC lab5/lab5-lib.cpp)
+set(UTSRC lab5/lab5-ut.cpp)
 
 add_library(lab-lib STATIC ${LIBSRC})
 
