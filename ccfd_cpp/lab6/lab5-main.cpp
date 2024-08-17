@@ -1,8 +1,111 @@
 #include "lab5-lib.hpp"
 #include <vector>
 #include <list>
+#include <iostream>
+#include <cstdio>
 
-int main()
+template <typename T>
+struct LowFunctor
 {
+    bool operator()(const T& first, const T& second)
+    {
+        return first >= second;
+    }
+};
+
+struct FunctorForSixExercise
+{
+    bool operator()(const int first)
+    {
+        return first >= limiter;
+    }
+
+    int limiter;
+};
+
+int global_limiter;
+
+int main() {
+    constexpr auto print_vector = [](const auto& vec) {
+        for (const auto& el : vec) std::cout << el << ' ';
+        std::cout << '\n';
+    };
+
+    { //////// 1 2
+        auto vector = makeRandomVector<int>(12, 0, 10);
+        // print_vector(makeRandomVector<int>(12, -2, 2));
+        // //print_vector(makeRandomVector<char>(12, 65, 90));  
+        // print_vector(makeRandomVector<double>(10, 0., 1.));
+        print_vector(vector);
+        std::sort(vector.begin(), vector.end());
+        print_vector(vector);
+        auto seven_count = std::count(vector.begin(), vector.end(), 7);
+        std::cout << seven_count << std::endl;
+    }
+        
+    {   //////////// 3
+        auto vector3 = makeRandomVector<int>(12, 0, 20);
+        auto vector33 = vector3;
+        print_vector(vector3);
+        print_vector(vector33);
+        std::sort(vector3.begin(), vector3.end(), LowFunctor<int>());
+        std::sort(vector33.begin(), vector33.end(), [](const int first, const int second){return first>second;});
+        print_vector(vector3);
+        print_vector(vector33);
+    }
     
+    {   /////////// 4
+        auto vector = makeRandomVector<int>(20, 0, 10);
+        print_vector(vector);
+        auto counter = std::count_if(vector.begin(), vector.end(), [](const int number){return number > 7;});
+        std::cout << counter << std::endl;
+    }
+
+    // {   ////// 5
+    //     std::cin >> global_limiter;
+    //     auto vector = makeRandomVector<int>(20, 0, 10);
+    //     print_vector(vector);
+    //     auto counter = std::count_if(vector.begin(), vector.end(), [](const int number){return number > global_limiter;});
+    //     std::cout << counter << std::endl;
+    // }
+
+    // {   ////// 6
+    //     FunctorForSixExercise functor;
+    //     std::cin >> functor.limiter;
+    //     auto vector = makeRandomVector<int>(20, 0, 10);
+    //     print_vector(vector);
+    //     auto counter = std::count_if(vector.begin(), vector.end(), functor);
+    //     std::cout << counter << std::endl;
+    // }
+
+    // {   ////// 7
+    //     int limiter;
+    //     std::cin >> limiter;
+    //     auto vector = makeRandomVector<int>(20, 0, 10);
+    //     print_vector(vector);
+    //     auto counter = std::count_if(vector.begin(), vector.end(), [&](const int num){return num > limiter;});
+    //     std::cout << counter << std::endl;
+    // }
+
+    { //// Cw 1
+        std::string string;
+        std::cin >> string;
+
+        std::cout << (std::adjacent_find(string.begin(), string.end()) != string.end() ? 1 : 0) << std::endl;
+    }
+
+    { //// Cw 1
+        std::string piesek = "piesek";
+        std::string kotek = "kotek";
+
+        std::string string;
+        std::cin >> string;
+
+        int pr = std::search(string.begin(), string.end(), piesek.begin(), piesek.end()) != string.end() ? 1 : 0;
+        int kr = std::search(string.begin(), string.end(), piesek.begin(), kotek.end()) != kotek.end() ? 1 : 0;
+
+        std::cout << (pr || kr) << std::endl;
+    }
+
+
 }
