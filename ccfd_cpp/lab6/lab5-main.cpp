@@ -3,6 +3,7 @@
 #include <list>
 #include <iostream>
 #include <cstdio>
+#include <cmath>
 
 template <typename T>
 struct LowFunctor
@@ -87,24 +88,71 @@ int main() {
     //     std::cout << counter << std::endl;
     // }
 
-    { //// Cw 1
-        std::string string;
-        std::cin >> string;
+    // { //// Cw 1
+    //     std::string string;
+    //     std::cin >> string;
 
-        std::cout << (std::adjacent_find(string.begin(), string.end()) != string.end() ? 1 : 0) << std::endl;
+    //     std::cout << (std::adjacent_find(string.begin(), string.end()) != string.end() ? 1 : 0) << std::endl;
+    // }
+
+    // { //// Cw 3
+    //     std::string piesek = "piesek";
+    //     std::string kotek = "kotek";
+
+    //     std::string string;
+    //     std::cin >> string;
+
+    //     int pr = std::search(string.begin(), string.end(), piesek.begin(), piesek.end()) != string.end() ? 1 : 0;
+    //     int kr = std::search(string.begin(), string.end(), piesek.begin(), kotek.end()) != kotek.end() ? 1 : 0;
+
+    //     std::cout << (pr || kr) << std::endl;
+    // }
+
+    { //// Cw 5
+        auto vector = makeRandomVector<int>(20, 0, 10);
+        print_vector(vector);
+
+        auto it = std::find(vector.begin(), vector.end(), 7);
+        std::sort(vector.begin(), it);
+
+        print_vector(vector);
     }
 
-    { //// Cw 1
-        std::string piesek = "piesek";
-        std::string kotek = "kotek";
+    { //// Cw 6
+        auto vector = makeRandomVector<int>(30, 0, 10);
+        print_vector(vector);
 
-        std::string string;
-        std::cin >> string;
+        vector.erase(std::remove(vector.begin(), vector.end(), 3), vector.end());
+        print_vector(vector);
 
-        int pr = std::search(string.begin(), string.end(), piesek.begin(), piesek.end()) != string.end() ? 1 : 0;
-        int kr = std::search(string.begin(), string.end(), piesek.begin(), kotek.end()) != kotek.end() ? 1 : 0;
+    }
 
-        std::cout << (pr || kr) << std::endl;
+    { //// Cw 7
+        auto vector = makeRandomVector<int>(30, 0, 10);
+        print_vector(vector);
+
+        std::rotate(vector.begin(), std::find(vector.begin(), vector.end(), 7), vector.end());
+        print_vector(vector);
+
+    }
+
+    { //// Cw 7
+        auto vector = makeRandomVector<double>(10, -1, 1);
+        print_vector(vector);
+
+        std::cout << std::any_of(vector.begin(), vector.end(), [](const double num){return num > 0.9;}) << std::endl;
+    }
+
+    { //// Cw 7
+        auto vector = makeRandomVector<double>(10, -1, 1);
+        print_vector(vector);
+
+        std::vector<double> out;
+        std::transform(vector.begin(), vector.end(), std::back_inserter(out), [](const double num){return std::sin(num);});
+
+        print_vector(vector);
+        print_vector(out);
+
     }
 
 
