@@ -177,6 +177,7 @@ int main() {
 
         print_vector(v);
         print_vector(r);
+        std::ranges::for_each(r, [](auto e) { std::cout << e << ' ';});
+        std::cout << std::endl;
     }
-
 }
