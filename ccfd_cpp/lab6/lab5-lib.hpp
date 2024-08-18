@@ -45,3 +45,32 @@ auto makeRandomVector(std::size_t size, T min, T max) {
 }
 //////////////////////////////////////////////////////
 
+template < typename ConstIt, typename Comp >
+std::vector< size_t > sorted_indices(ConstIt first, ConstIt last, Comp compare)
+{
+    std::vector<std::pair<int, size_t>> vec;
+    for(int i = 0; i < std::distance(first, last); i++)
+    {
+        vec.push_back({*(first+i), i});
+    }
+    std::sort(vec.begin(), vec.end(), [&](std::pair<int, size_t> first, std::pair<int, size_t> second) { return compare(first.first, second.first); });
+
+    std::vector<size_t> out;
+    for(int i=0; i<vec.size(); i++)
+    {
+        out.push_back(vec[i].second);
+    }
+
+    return out;
+}
+
+// template <typename ConstIt, typename Comp>
+// std::vector<size_t> sorted_indices(ConstIt first, ConstIt last, Comp compare) {
+//     std::vector<size_t> v(std::distance(first, last));
+//     std::iota(begin(v), end(v), 0u);
+
+//     std::sort(begin(v), end(v),
+//               [&](size_t a, size_t b) { return compare(first[a], first[b]); });
+
+//     return v;
+// }

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cmath>
+#include <cassert>
 
 template <typename T>
 struct LowFunctor
@@ -136,14 +137,14 @@ int main() {
 
     }
 
-    { //// Cw 7
+    { //// Cw 8
         auto vector = makeRandomVector<double>(10, -1, 1);
         print_vector(vector);
 
         std::cout << std::any_of(vector.begin(), vector.end(), [](const double num){return num > 0.9;}) << std::endl;
     }
 
-    { //// Cw 7
+    { //// Cw 9
         auto vector = makeRandomVector<double>(10, -1, 1);
         print_vector(vector);
 
@@ -152,8 +153,30 @@ int main() {
 
         print_vector(vector);
         print_vector(out);
-
     }
 
+    { //// Cw 10
+        auto vector = makeRandomVector<int>(10, 0, 10);
+        print_vector(vector);
+
+        auto new_end = std::partition(vector.begin(), vector.end(), [](const int num){return num > 6;});
+        std::sort(new_end, vector.end());
+
+        print_vector(vector);
+    }
+
+    { //// Cw 11
+        std::vector<unsigned> v = makeRandomVector<unsigned>(10, 0, 10);
+        auto r = sorted_indices(v.begin(), v.end(), std::less<unsigned>{});
+        int a = 0;
+        for(size_t i = 0; i < v.size(); ++i)
+        {
+            assert(a <= v[r[i]]);
+            a = v[r[i]];
+        }
+
+        print_vector(v);
+        print_vector(r);
+    }
 
 }
