@@ -3,3 +3,7 @@
 .vscode
 /ccfd_cpp/build
 /ccfd_cpp/.vscode
+/synchronization/build
+/synchronization/.vscode
+/synchronization/semaphores/build
+/synchronization/semaphores/.vscode
