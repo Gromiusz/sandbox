@@ -6,49 +6,76 @@
 #include <cstdlib>
 #include <cassert>
 
-struct MyBinarySemaphore
+struct MySemaphore
 {
-    pthread_mutex_t bin_semafor;
-    unsigned counter;
-    static pthread_mutex_t mutex;
-    MyBinarySemaphore(unsigned _counter): bin_semafor(PTHREAD_MUTEX_INITIALIZER), counter(_counter) 
+    pthread_mutex_t bin_sem1;
+    pthread_mutex_t bin_sem2;
+    pthread_mutex_t bin_sem12;
+    unsigned counter1;
+    unsigned counter2;
+    unsigned waiting1;
+    unsigned waiting2;
+    unsigned waiting12;
+    pthread_mutex_t mutex;
+    MySemaphore(unsigned _counter1, unsigned _counter2): bin_sem1(PTHREAD_MUTEX_INITIALIZER), bin_sem2(PTHREAD_MUTEX_INITIALIZER), mutex(PTHREAD_MUTEX_INITIALIZER), counter1(_counter1), counter2(_counter2), waiting1(0), waiting2(0)
     {
-        assert(counter<2); 
-        if(counter == 0) pthread_mutex_lock(&bin_semafor);
-        std::cout << &bin_semafor << std::endl;
+        pthread_mutex_lock(&bin_sem1);
+        pthread_mutex_lock(&bin_sem2);
+        pthread_mutex_lock(&bin_sem12);
+    }
+    ~MySemaphore()
+    {
+        pthread_mutex_destroy(&bin_sem1);
+        pthread_mutex_destroy(&bin_sem2);
+        pthread_mutex_destroy(&bin_sem12);
+        pthread_mutex_destroy(&mutex);
     }
 };
 
-pthread_mutex_t MyBinarySemaphore::mutex = PTHREAD_MUTEX_INITIALIZER;
-MyBinarySemaphore sem1(1), sem2(1);
-
+MySemaphore sem(1, 4);
 
 void P() {
-    // pthread_mutex_lock(&MyBinarySemaphore::mutex);
-    pthread_mutex_lock(&sem1.bin_semafor);
-    pthread_mutex_lock(&sem2.bin_semafor);
-    // pthread_mutex_unlock(&MyBinarySemaphore::mutex);
+    pthread_mutex_lock(&sem.mutex);
+    if(sem.counter1 == 0 || sem.counter2 == 0) 
+    {
+        sem.waiting12++;
+        pthread_mutex_unlock(&sem.mutex);
+        pthread_mutex_lock(&sem.bin_sem12);
+        sem.waiting12--;
+    }
+    sem.counter1--;
+    sem.counter2--;
+    pthread_mutex_unlock(&sem.mutex);
 }
 
 void V1() {
-    // pthread_mutex_lock(&MyBinarySemaphore::mutex);
-    pthread_mutex_unlock(&sem1.bin_semafor);
-    // pthread_mutex_unlock(&MyBinarySemaphore::mutex);
+    pthread_mutex_lock(&sem.mutex);
+    sem.counter1++;
+    if(sem.waiting12 > 0 && sem.counter2 > 0)
+    {
+        pthread_mutex_unlock(&sem.bin_sem12);
+        pthread_mutex_lock(&sem.mutex);
+    }
+    pthread_mutex_unlock(&sem.mutex);
 }
 
 void V2() {
-    // pthread_mutex_lock(&MyBinarySemaphore::mutex);
-    pthread_mutex_unlock(&sem2.bin_semafor);
-    // pthread_mutex_unlock(&MyBinarySemaphore::mutex);
+    pthread_mutex_lock(&sem.mutex);
+    sem.counter2++;
+    if(sem.waiting12 > 0 && sem.counter1 > 0)
+    {
+        pthread_mutex_unlock(&sem.bin_sem12);
+        pthread_mutex_lock(&sem.mutex);
+    }
+    pthread_mutex_unlock(&sem.mutex);
 }
 
 void* funkcja1(void* arg) {
 
-    for(int i=0; i<10; i++)
+    for(int i=0; i<3; i++)
     {
         P();
         std::cout << "Watek 1 w sekcji krytycznej " << std::endl;
-        V1();
         V2();
     }
 
@@ -57,12 +84,10 @@ void* funkcja1(void* arg) {
 
 void* funkcja2(void* arg) {
 
-    for(int i=0; i<10; i++)
+    for(int i=0; i<3; i++)
     {
-        P();
         std::cout << "Watek 2 w sekcji krytycznej " << std::endl;;
         V1();
-        V2();
     }
 
     return nullptr;
