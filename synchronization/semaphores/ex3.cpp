@@ -15,7 +15,7 @@ struct GeneralSemaphore
     unsigned waiting1;
     unsigned waiting2;
 
-    GeneralSemaphore(unsigned _counter1, unsigned _counter2): bin_sem1(PTHREAD_MUTEX_INITIALIZER), bin_sem2(PTHREAD_MUTEX_INITIALIZER), mutex(PTHREAD_MUTEX_INITIALIZER), counter1(_counter1), counter2(_counter2), waiting1(0), waiting2(0)
+    GeneralSemaphore(unsigned _counter): bin_sem1(PTHREAD_MUTEX_INITIALIZER), bin_sem2(PTHREAD_MUTEX_INITIALIZER), mutex(PTHREAD_MUTEX_INITIALIZER), counter(_counter), waiting1(0), waiting2(0)
     {
         pthread_mutex_lock(&bin_sem1);
         pthread_mutex_lock(&bin_sem2);
@@ -51,8 +51,12 @@ public:
         p(mutex);
         if(counter < 2)
         {
-            
+            waiting2++;
+            v(mutex);
+            p(bin_sem2);
+            waiting2--;
         }
+        counter -= 2;
 
         v(mutex);
     }
@@ -60,7 +64,24 @@ public:
     void V1()
     {
         p(mutex);
-        
+        counter++;
+        if(waiting2 > 0 && counter == 1)
+        {
+            v(bin_sem2);
+            p(mutex);
+        }
+        else if(waiting1 > 1)
+        {
+            v(bin_sem1);
+            p(mutex);
+            v(bin_sem1);
+            p(mutex);
+        }
+        else if(waiting1 > 0)
+        {
+            v(bin_sem1);
+            p(mutex);
+        }
 
         v(mutex);
     }
@@ -68,20 +89,54 @@ public:
     void V3()
     {
         p(mutex);
-        
+        counter =+ 3;
+        if(waiting2 > 0 && waiting1 > 0)
+        {
+            v(bin_sem2);
+            p(mutex);
+            v(bin_sem1);
+            p(mutex);
+        }
+        else if(waiting2 > 0)
+        {
+            v(bin_sem2);
+            p(mutex);
+        }
+        else if(waiting1 > 2)
+        {
+            v(bin_sem1);
+            p(mutex);
+            v(bin_sem1);
+            p(mutex);
+            v(bin_sem1);
+            p(mutex);
+        }
+        else if(waiting1 > 1)
+        {
+            v(bin_sem1);
+            p(mutex);
+            v(bin_sem1);
+            p(mutex);
+        }
+        else if(waiting1 > 0)
+        {
+            v(bin_sem1);
+            p(mutex);
+        }
 
         v(mutex);
     }
 };
 
+GeneralSemaphore sem(2);
 
 void* funkcja1(void* arg) {
 
     for(int i=0; i<10; i++)
     {
-        P1();
+        sem.P2();
         std::cout << "Watek 1 w sekcji krytycznej " << sem.counter << std::endl;
-        V3();
+        sem.V1();
     }
 
     return nullptr;
@@ -91,8 +146,9 @@ void* funkcja2(void* arg) {
 
     for(int i=0; i<10; i++)
     {
-        P2();
-        std::cout << "Watek 2 w sekcji krytycznej " << sem.counter << std::endl;;
+        sem.P1();
+        std::cout << "Watek 2 w sekcji krytycznej " << sem.counter << std::endl;
+        sem.V3();
 
     }
 
