@@ -65,7 +65,7 @@ public:
     {
         p(mutex);
         counter++;
-        if(waiting2 > 0 && counter == 1)
+        if(waiting2 > 0 && counter == 2)
         {
             v(bin_sem2);
             p(mutex);
@@ -77,7 +77,7 @@ public:
             v(bin_sem1);
             p(mutex);
         }
-        else if(waiting1 > 0)
+        else if(waiting1 == 1)
         {
             v(bin_sem1);
             p(mutex);
