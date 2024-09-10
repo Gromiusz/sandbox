@@ -4,4 +4,5 @@ project(Semaphores)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_executable(ex ex5.cpp)
+include_directories(.)
+add_executable(ex ex1_s.cpp)
